@@ -1,6 +1,14 @@
-import { useState } from 'react';
+import { use, useState } from 'react';
+import { NavLink } from 'react-router-dom';
+import { useSelector } from "react-redux";
+import { selectCurrentClient } from '../../store/slices/clientsSlice';
 
 const ClientDashboard = () => {
+  const currentClient = useSelector(selectCurrentClient);
+  const openOffers = useSelector(state => state.offers.offers);
+  const valueCountByCategory = useSelector(state => state.offers.valueCountByCategory);
+
+  if (!currentClient) return <div>Loading...</div>;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
@@ -42,23 +50,25 @@ const ClientDashboard = () => {
                 </svg>
                 <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
               </button>
-              
-              <button className="relative p-2 hover:bg-gray-100 rounded-lg transition-colors">
+
+              <NavLink to={'chat'} className="relative p-2 hover:bg-gray-100 rounded-lg transition-colors">
                 <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                 </svg>
                 <span className="absolute top-1 right-1 w-2 h-2 bg-indigo-500 rounded-full"></span>
-              </button>
+              </NavLink>
 
-              <div className="flex items-center space-x-3 pl-4 border-l border-gray-200">
-                <div className="text-right">
-                  <p className="text-sm font-semibold text-gray-900">Saleh Mangrio</p>
-                  <p className="text-xs text-gray-500 capitalize">Client</p>
+              <NavLink to='profile'>
+                <div className="flex items-center space-x-3 pl-4 border-l border-gray-200">
+                  <div className="text-right">
+                    <p className="text-sm font-semibold text-gray-900">{currentClient.name}</p>
+                    <p className="text-xs text-gray-500 capitalize">Client</p>
+                  </div>
+                  <div className="w-10 h-10 bg-gradient-to-br from-indigo-400 to-purple-400 rounded-full flex items-center justify-center text-white font-semibold cursor-pointer hover:shadow-lg transition-all">
+                    {currentClient.avatar}
+                  </div>
                 </div>
-                <div className="w-10 h-10 bg-gradient-to-br from-indigo-400 to-purple-400 rounded-full flex items-center justify-center text-white font-semibold cursor-pointer hover:shadow-lg transition-all">
-                  SM
-                </div>
-              </div>
+              </NavLink>
             </div>
           </div>
         </div>
@@ -69,7 +79,7 @@ const ClientDashboard = () => {
         {/* Welcome Section */}
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            Welcome back, Saleh! 👋
+            Welcome back, {currentClient.name.split(" ")[0]}! 👋
           </h2>
           <p className="text-gray-600">
             Find the perfect freelancer for your project. Browse OpenOffers or post a new job.
@@ -82,7 +92,7 @@ const ClientDashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Active Jobs</p>
-                <p className="text-3xl font-bold text-gray-900">8</p>
+                <p className="text-3xl font-bold text-gray-900">{currentClient.activeJobs}</p>
               </div>
               <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
                 <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -96,7 +106,7 @@ const ClientDashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Hired Freelancers</p>
-                <p className="text-3xl font-bold text-gray-900">24</p>
+                <p className="text-3xl font-bold text-gray-900">{currentClient.hiredFreelancers}</p>
               </div>
               <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
                 <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -110,7 +120,7 @@ const ClientDashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Total Spent</p>
-                <p className="text-3xl font-bold text-gray-900">$52.3k</p>
+                <p className="text-3xl font-bold text-gray-900">{currentClient.totalSpent}</p>
               </div>
               <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                 <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -124,7 +134,7 @@ const ClientDashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Proposals Received</p>
-                <p className="text-3xl font-bold text-gray-900">156</p>
+                <p className="text-3xl font-bold text-gray-900">{currentClient.proposalsReceived}</p>
               </div>
               <div className="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center">
                 <svg className="w-6 h-6 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -151,45 +161,14 @@ const ClientDashboard = () => {
               </div>
 
               <div className="space-y-4">
-                {[
-                  {
-                    name: 'Alex Martinez',
-                    title: 'Full Stack Developer',
-                    description: 'Expert in React, Node.js, and MongoDB. 5+ years building scalable web applications.',
-                    skills: ['React', 'Node.js', 'MongoDB', 'TypeScript'],
-                    rate: '$80/hr',
-                    rating: 4.9,
-                    completed: 127,
-                    avatar: 'AM'
-                  },
-                  {
-                    name: 'Emily Chen',
-                    title: 'UI/UX Designer',
-                    description: 'Creating beautiful, user-centered designs. Specialized in mobile and web interfaces.',
-                    skills: ['Figma', 'Adobe XD', 'Prototyping', 'User Research'],
-                    rate: '$65/hr',
-                    rating: 5.0,
-                    completed: 89,
-                    avatar: 'EC'
-                  },
-                  {
-                    name: 'Michael Brown',
-                    title: 'DevOps Engineer',
-                    description: 'AWS certified with expertise in CI/CD, Docker, and Kubernetes infrastructure.',
-                    skills: ['AWS', 'Docker', 'Kubernetes', 'Jenkins'],
-                    rate: '$95/hr',
-                    rating: 4.8,
-                    completed: 64,
-                    avatar: 'MB'
-                  }
-                ].map((offer, index) => (
+                {openOffers.map((offer, index) => (
                   <div key={index} className="border-2 border-gray-200 rounded-xl p-5 hover:border-indigo-300 hover:shadow-md transition-all">
                     <div className="flex items-start space-x-4">
                       {/* Avatar */}
                       <div className="w-16 h-16 bg-gradient-to-br from-indigo-400 to-purple-400 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
                         {offer.avatar}
                       </div>
-                      
+
                       {/* Content */}
                       <div className="flex-1">
                         <div className="flex items-start justify-between mb-2">
@@ -207,9 +186,9 @@ const ClientDashboard = () => {
                             </div>
                           </div>
                         </div>
-                        
+
                         <p className="text-sm text-gray-600 mb-3">{offer.description}</p>
-                        
+
                         <div className="flex flex-wrap gap-2 mb-3">
                           {offer.skills.map((skill, idx) => (
                             <span key={idx} className="px-3 py-1 bg-indigo-100 text-indigo-700 text-xs font-medium rounded-full">
@@ -217,7 +196,7 @@ const ClientDashboard = () => {
                             </span>
                           ))}
                         </div>
-                        
+
                         <div className="flex items-center space-x-3">
                           <button className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all shadow-md hover:shadow-lg">
                             Hire Now
@@ -252,33 +231,27 @@ const ClientDashboard = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
               </div>
-              <button className="w-full bg-white text-indigo-600 py-3 rounded-lg font-semibold hover:bg-indigo-50 transition-all shadow-md hover:shadow-lg flex items-center justify-center space-x-2">
+              <NavLink  to={"post-job"} className="w-full bg-white text-indigo-600 py-3 rounded-lg font-semibold hover:bg-indigo-50 transition-all shadow-md hover:shadow-lg flex items-center justify-center space-x-2">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                 </svg>
                 <span>Post New Job</span>
-              </button>
+              </NavLink>
             </div>
 
             {/* Active Jobs */}
             <div className="bg-white rounded-xl shadow-md p-6">
               <h3 className="text-lg font-bold text-gray-900 mb-4">Your Active Jobs</h3>
               <div className="space-y-4">
-                <div className="border-l-4 border-indigo-500 pl-4 py-2">
-                  <h4 className="font-semibold text-gray-900 text-sm">Mobile App Development</h4>
-                  <p className="text-xs text-gray-600 mt-1">12 proposals received</p>
-                  <p className="text-xs text-indigo-600 mt-1">Posted 3 days ago</p>
-                </div>
-                <div className="border-l-4 border-purple-500 pl-4 py-2">
-                  <h4 className="font-semibold text-gray-900 text-sm">Logo Design Project</h4>
-                  <p className="text-xs text-gray-600 mt-1">8 proposals received</p>
-                  <p className="text-xs text-indigo-600 mt-1">Posted 1 week ago</p>
-                </div>
-                <div className="border-l-4 border-green-500 pl-4 py-2">
-                  <h4 className="font-semibold text-gray-900 text-sm">SEO Optimization</h4>
-                  <p className="text-xs text-gray-600 mt-1">15 proposals received</p>
-                  <p className="text-xs text-indigo-600 mt-1">Posted 2 weeks ago</p>
-                </div>
+                {
+                  currentClient?.openJobs.map((job, idx) => (
+                    <div key={idx} className="border-l-4 border-indigo-500 pl-4 py-2">
+                      <h4 className="font-semibold text-gray-900 text-sm">{job.title}</h4>
+                      <p className="text-xs text-gray-600 mt-1">{job.proposals} proposals received</p>
+                      <p className="text-xs text-indigo-600 mt-1">Posted {job.posted} ago</p>
+                    </div>
+                  ))
+                }
               </div>
               <button className="w-full mt-4 text-sm text-indigo-600 hover:text-indigo-700 font-semibold">
                 View All Jobs →
@@ -289,36 +262,16 @@ const ClientDashboard = () => {
             <div className="bg-white rounded-xl shadow-md p-6">
               <h3 className="text-lg font-bold text-gray-900 mb-4">Browse by Category</h3>
               <div className="space-y-2">
-                <button className="w-full text-left px-4 py-3 bg-gray-50 hover:bg-indigo-50 rounded-lg transition-colors group">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-900 group-hover:text-indigo-600">Web Development</span>
-                    <span className="text-xs text-gray-500">234 offers</span>
-                  </div>
-                </button>
-                <button className="w-full text-left px-4 py-3 bg-gray-50 hover:bg-indigo-50 rounded-lg transition-colors group">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-900 group-hover:text-indigo-600">Design & Creative</span>
-                    <span className="text-xs text-gray-500">189 offers</span>
-                  </div>
-                </button>
-                <button className="w-full text-left px-4 py-3 bg-gray-50 hover:bg-indigo-50 rounded-lg transition-colors group">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-900 group-hover:text-indigo-600">Mobile Apps</span>
-                    <span className="text-xs text-gray-500">156 offers</span>
-                  </div>
-                </button>
-                <button className="w-full text-left px-4 py-3 bg-gray-50 hover:bg-indigo-50 rounded-lg transition-colors group">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-900 group-hover:text-indigo-600">Marketing</span>
-                    <span className="text-xs text-gray-500">98 offers</span>
-                  </div>
-                </button>
-                <button className="w-full text-left px-4 py-3 bg-gray-50 hover:bg-indigo-50 rounded-lg transition-colors group">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-900 group-hover:text-indigo-600">Writing & Content</span>
-                    <span className="text-xs text-gray-500">142 offers</span>
-                  </div>
-                </button>
+                {
+                  Object.entries(valueCountByCategory).map(([category, count], idx) => (
+                    <button key={idx} className="w-full text-left px-4 py-3 bg-gray-50 hover:bg-indigo-50 rounded-lg transition-colors group">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-gray-900 group-hover:text-indigo-600">{category}</span>
+                        <span className="text-xs text-gray-500">{count} offers</span>
+                      </div>
+                    </button>
+                  ))
+                }
               </div>
             </div>
 
